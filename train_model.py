@@ -88,8 +88,7 @@ if __name__ == '__main__':
     train_csv = "./data/sample/sample_train_ann_encoded.csv"
     val_csv = "./data/sample/sample_train_ann_encoded.csv"
     data_dir = "./data/sample"
-    print(len(cmd_args))
-    print(cmd_args)
+
     if len(cmd_args) != 4:
         print("Check your arguments")
         print("Running on sample data")

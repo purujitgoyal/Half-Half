@@ -23,9 +23,9 @@ def _data_transformation():
 
 def get_data_loaders(train_csv, val_csv, data_dir, batch_size=32, num_workers=0):
     transformation = _data_transformation()
-    train_dataset = HalfHalfLabelsDataset(csv_file=train_csv, root_dir=os.path.join(data_dir, 'train'),
+    train_dataset = HalfHalfLabelsDataset(csv_file=train_csv, root_dir=os.path.join(data_dir, 'train', 'images'),
                                           transform=transformation, num_classes=79)
-    val_dataset = HalfHalfLabelsDataset(csv_file=val_csv, root_dir=os.path.join(data_dir, 'val'),
+    val_dataset = HalfHalfLabelsDataset(csv_file=val_csv, root_dir=os.path.join(data_dir, 'val', 'images'),
                                         transform=transformation, num_classes=79)
     image_datasets = {'train': train_dataset, 'val': val_dataset}
 
