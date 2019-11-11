@@ -1,4 +1,5 @@
 import copy
+import sys
 import time
 
 import torch
@@ -21,7 +22,7 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
         print('-' * 10)
 
         # Each epoch has a training and validation phase
-        for phase in ['train']:
+        for phase in ['train', 'val']:
             if phase == 'train':
                 model.train()  # Set model to training mode
             else:
@@ -52,10 +53,7 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
 
                 # statistics
                 running_loss += loss.item() * inputs.size(0)
-                print(preds)
-                # print(labels.data)
                 max_val, target = labels.max(1)
-                print(target)
                 running_corrects += torch.sum(preds == target)
             if phase == 'train':
                 scheduler.step()
@@ -80,16 +78,29 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
 
     # load best model weights
     model.load_state_dict(best_model_wts)
+    torch.save(model.state_dict(), "./model_wts")
     return model
 
 
 if __name__ == '__main__':
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    csv_file_path = "./data/sample/train_ann_encoded.csv"
+    cmd_args = sys.argv
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    train_csv = "./data/sample/sample_train_ann_encoded.csv"
+    val_csv = "./data/sample/sample_train_ann_encoded.csv"
     data_dir = "./data/sample"
+    print(len(cmd_args))
+    print(cmd_args)
+    if len(cmd_args) != 4:
+        print("Check your arguments")
+        print("Running on sample data")
+    else:
+        train_csv = cmd_args[1]
+        val_csv = cmd_args[2]
+        data_dir = cmd_args[3]
+
     finetune_conv = False
     model = baseline.model.get_model(out_features=79, finetune_conv=finetune_conv, device=device)
-    dataloaders, dataset_sizes = data.data_load.get_data_loaders(csv_file=csv_file_path, data_dir=data_dir)
+    dataloaders, dataset_sizes = data.data_load.get_data_loaders(train_csv=train_csv, val_csv=val_csv, data_dir=data_dir)
 
     cross_entropy = nn.BCEWithLogitsLoss()
     sgd = optim.SGD(model.parameters(), lr=0.1, momentum=0.9)

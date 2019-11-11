@@ -21,12 +21,13 @@ def _data_transformation():
     return transformation
 
 
-def get_data_loaders(csv_file, data_dir, batch_size=32, num_workers=0):
+def get_data_loaders(train_csv, val_csv, data_dir, batch_size=32, num_workers=0):
     transformation = _data_transformation()
-    # train_dataset = HalfHalfLabelsDataset
-    image_datasets = {x: HalfHalfLabelsDataset(csv_file=csv_file, root_dir=os.path.join(data_dir, x),
-                                               transform=transformation, num_classes=79)
-                      for x in ['train', 'val']}
+    train_dataset = HalfHalfLabelsDataset(csv_file=train_csv, root_dir=os.path.join(data_dir, 'train'),
+                                          transform=transformation, num_classes=79)
+    val_dataset = HalfHalfLabelsDataset(csv_file=val_csv, root_dir=os.path.join(data_dir, 'val'),
+                                        transform=transformation, num_classes=79)
+    image_datasets = {'train': train_dataset, 'val': val_dataset}
 
     # print(image_datasets['train'][100])
     dataloaders = {x: DataLoader(image_datasets[x], batch_size=batch_size, shuffle=True, num_workers=num_workers)
@@ -51,11 +52,13 @@ def imshow(inp, title=None):
 
 
 if __name__ == '__main__':
-    dataloaders, dataset_sizes = get_data_loaders(csv_file="./sample/train_ann_encoded.csv", data_dir="./sample")
+    dataloaders, dataset_sizes = get_data_loaders(train_csv="./sample/sample_train_ann_encoded.csv",
+                                                  val_csv="./data/sample/sample_train_ann_encoded.csv",
+                                                  data_dir="./sample")
 
-    for input, labels in dataloaders['train']:
+    for inputs, labels in dataloaders['train']:
         # print(i_batch, sample_batched)
-        print(input)
+        print(inputs)
         print(labels)
 
     # sample_images, sample_labels = next(iter(dataloaders['train']))
