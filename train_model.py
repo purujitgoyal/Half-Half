@@ -11,7 +11,7 @@ import baseline.model
 import data.data_load
 
 
-def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_sizes, num_epochs=25, device='cpu'):
+def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_sizes, device, num_epochs=25):
     since = time.time()
 
     best_model_wts = copy.deepcopy(model.state_dict())
@@ -88,6 +88,7 @@ if __name__ == '__main__':
     train_csv = "./data/sample/sample_train_ann_encoded.csv"
     val_csv = "./data/sample/sample_train_ann_encoded.csv"
     data_dir = "./data/sample"
+    num_epochs = 25
 
     if len(cmd_args) != 4:
         print("Check your arguments")
@@ -96,6 +97,7 @@ if __name__ == '__main__':
         train_csv = cmd_args[1]
         val_csv = cmd_args[2]
         data_dir = cmd_args[3]
+        num_epochs = int(cmd_args[4])
 
     finetune_conv = False
     model = baseline.model.get_model(out_features=79, finetune_conv=finetune_conv, device=device)
@@ -108,4 +110,4 @@ if __name__ == '__main__':
     exp_lr_scheduler = lr_scheduler.StepLR(sgd, step_size=10, gamma=1)
 
     train_model(model, criterion=cross_entropy, optimizer=sgd, scheduler=exp_lr_scheduler, dataloaders=dataloaders,
-                dataset_sizes=dataset_sizes)
+                dataset_sizes=dataset_sizes, device=device, num_epochs=num_epochs)
