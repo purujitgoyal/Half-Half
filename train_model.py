@@ -35,6 +35,8 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
             for inputs, labels in dataloaders[phase]:
                 inputs = inputs.to(device)
                 labels = labels.to(device)
+                print(inputs.size())
+                print(labels.size())
 
                 # zero the parameter gradients
                 optimizer.zero_grad()
@@ -90,7 +92,7 @@ if __name__ == '__main__':
     data_dir = "./data/sample"
     num_epochs = 25
 
-    if len(cmd_args) != 4:
+    if len(cmd_args) != 5:
         print("Check your arguments")
         print("Running on sample data")
     else:
