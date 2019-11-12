@@ -4,8 +4,9 @@ import pandas as pd
 from torch.utils.data import Dataset
 import torch
 import os
-from skimage import io
+from PIL import Image
 import numpy as np
+from torchvision.transforms import ToTensor
 
 
 class HalfHalfLabelsDataset(Dataset):
@@ -32,7 +33,10 @@ class HalfHalfLabelsDataset(Dataset):
 
         img_name = os.path.join(self.root_dir,
                                 self.labels_df.iloc[idx, 0])
-        image = io.imread(img_name)
+        image = Image.open(img_name)
+        if image.getbands()[0] == 'L':
+            image = image.convert('RGB')
+        image = ToTensor()(image)
         label = self.labels_df.iloc[idx, 1]
         label_ohe = np.zeros(self.num_classes,)
         label_ohe[label] = 1
