@@ -53,13 +53,18 @@ def imshow(inp, title=None):
 
 if __name__ == '__main__':
     dataloaders, dataset_sizes = get_data_loaders(train_csv="./sample/sample_train_ann_encoded.csv",
-                                                  val_csv="./data/sample/sample_train_ann_encoded.csv",
+                                                  val_csv="./sample/sample_train_ann_encoded.csv",
                                                   data_dir="./sample")
 
-    for inputs, labels in dataloaders['train']:
+    for inputs, label_ohe, labels in dataloaders['train']:
         # print(i_batch, sample_batched)
-        print(inputs)
+        # print(inputs)
+        # print(label_ohe)
         print(labels)
+        scores = torch.randn(4, 79, dtype=torch.double)
+        print(scores)
+        for i in range(scores.size()[0]):
+            print(scores[i][labels[i]])
 
     # sample_images, sample_labels = next(iter(dataloaders['train']))
     # print(sample_labels)

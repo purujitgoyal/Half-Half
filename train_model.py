@@ -11,6 +11,19 @@ import baseline.model
 import data.data_load
 
 
+def get_rank1_corrects(outputs, labels):
+    rank1_acc = 0
+
+    for i in range(outputs.size()[0]):
+        output_i = outputs[i][labels[i]]
+        print(output_i)
+        max_output, max_index = torch.max(output_i, 0)
+        if max_index == 0:
+            rank1_acc += 1
+
+    return torch.as_tensor(rank1_acc)
+
+
 def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_sizes, device, num_epochs=25):
     since = time.time()
 
@@ -32,11 +45,12 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
             running_corrects = 0
 
             # Iterate over data.
-            for inputs, labels in dataloaders[phase]:
+            for inputs, labels_ohe, labels in dataloaders[phase]:
                 inputs = inputs.to(device)
+                labels_ohe = labels_ohe.to(device)
                 labels = labels.to(device)
-                print(inputs.size())
-                print(labels.size())
+                # print(inputs.size())
+                # print(labels_ohe.size())
 
                 # zero the parameter gradients
                 optimizer.zero_grad()
@@ -46,7 +60,7 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
                 with torch.set_grad_enabled(phase == 'train'):
                     outputs = model(inputs)
                     _, preds = torch.max(outputs, 1)
-                    loss = criterion(outputs, labels.float())
+                    loss = criterion(outputs, labels_ohe.float())
 
                     # backward + optimize only if in training phase
                     if phase == 'train':
@@ -55,8 +69,12 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
 
                 # statistics
                 running_loss += loss.item() * inputs.size(0)
-                max_val, target = labels.max(1)
-                running_corrects += torch.sum(preds == target)
+                max_val, target = labels_ohe.max(1)
+                if phase == 'train':
+                    running_corrects += torch.sum(preds == target)
+                if phase == 'val':
+                    running_corrects += get_rank1_corrects(outputs, labels)
+
             if phase == 'train':
                 scheduler.step()
 
@@ -70,6 +88,7 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
             if phase == 'val' and epoch_acc > best_acc:
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
+                torch.save(model.state_dict(), "./model_wts")
 
         print()
 
@@ -80,7 +99,6 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
 
     # load best model weights
     model.load_state_dict(best_model_wts)
-    torch.save(model.state_dict(), "./model_wts")
     return model
 
 
@@ -106,10 +124,9 @@ if __name__ == '__main__':
     dataloaders, dataset_sizes = data.data_load.get_data_loaders(train_csv=train_csv, val_csv=val_csv, data_dir=data_dir)
 
     cross_entropy = nn.BCEWithLogitsLoss()
-    sgd = optim.SGD(model.parameters(), lr=0.1, momentum=0.9)
+    adam = optim.Adam(model.parameters(), lr=0.9, weight_decay=0.01)
 
-    # Decay LR by a factor of 0.1 every 7 epochs
-    exp_lr_scheduler = lr_scheduler.StepLR(sgd, step_size=10, gamma=1)
+    exp_lr_scheduler = lr_scheduler.StepLR(adam, step_size=10, gamma=0.9)
 
-    train_model(model, criterion=cross_entropy, optimizer=sgd, scheduler=exp_lr_scheduler, dataloaders=dataloaders,
+    train_model(model, criterion=cross_entropy, optimizer=adam, scheduler=exp_lr_scheduler, dataloaders=dataloaders,
                 dataset_sizes=dataset_sizes, device=device, num_epochs=num_epochs)

@@ -37,14 +37,17 @@ class HalfHalfLabelsDataset(Dataset):
         if image.getbands()[0] == 'L':
             image = image.convert('RGB')
         image = ToTensor()(image)
-        label = self.labels_df.iloc[idx, 1]
+        labels = self.labels_df.iloc[idx, 1:]
+        # print(labels)
+        labels = torch.tensor(labels)
         label_ohe = np.zeros(self.num_classes,)
-        label_ohe[label] = 1
-        # print(type(label))
+        label_ohe[labels[0]] = 1
+        # print(type(labels))
         # print(type(label_ohe))
+        # print(label_ohe)
         if self.transform:
             image = self.transform(image)
 
-        # sample = {'image': image, 'label': label}
+        # sample = {'image': image, 'labels': labels}
 
-        return image, label_ohe.astype(int)
+        return image, label_ohe, labels
