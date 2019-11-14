@@ -129,5 +129,5 @@ if __name__ == '__main__':
 
     exp_lr_scheduler = lr_scheduler.StepLR(sgd, step_size=10, gamma=0.9)
 
-    train_model(model, criterion=cross_entropy, optimizer=adam, scheduler=exp_lr_scheduler, dataloaders=dataloaders,
+    train_model(model, criterion=cross_entropy, optimizer=sgd, scheduler=exp_lr_scheduler, dataloaders=dataloaders,
                 dataset_sizes=dataset_sizes, device=device, num_epochs=num_epochs)
