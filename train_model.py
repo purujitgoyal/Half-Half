@@ -16,8 +16,8 @@ def get_rank1_corrects(outputs, labels):
 
     for i in range(outputs.size()[0]):
         output_i = outputs[i][labels[i]]
-        print(output_i)
-        max_output, max_index = torch.max(output_i, 0)
+        # print(output_i)
+        _, max_index = torch.max(output_i, 0)
         if max_index == 0:
             rank1_acc += 1
 
@@ -69,7 +69,7 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
 
                 # statistics
                 running_loss += loss.item() * inputs.size(0)
-                max_val, target = labels_ohe.max(1)
+                _, target = labels_ohe.max(1)
                 if phase == 'train':
                     running_corrects += torch.sum(preds == target)
                 if phase == 'val':
@@ -124,9 +124,10 @@ if __name__ == '__main__':
     dataloaders, dataset_sizes = data.data_load.get_data_loaders(train_csv=train_csv, val_csv=val_csv, data_dir=data_dir)
 
     cross_entropy = nn.BCEWithLogitsLoss()
-    adam = optim.Adam(model.parameters(), lr=0.9, weight_decay=0.01)
+    sgd = optim.SGD(model.parameters(), lr=0.1, momentum=0.9)
+    # adam = optim.Adam(model.parameters(), lr=0.9, weight_decay=0.01)
 
-    exp_lr_scheduler = lr_scheduler.StepLR(adam, step_size=10, gamma=0.9)
+    exp_lr_scheduler = lr_scheduler.StepLR(sgd, step_size=10, gamma=0.9)
 
     train_model(model, criterion=cross_entropy, optimizer=adam, scheduler=exp_lr_scheduler, dataloaders=dataloaders,
                 dataset_sizes=dataset_sizes, device=device, num_epochs=num_epochs)
