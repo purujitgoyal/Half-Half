@@ -8,4 +8,3 @@
 /model_wts
 *.txt
 */logs/*
-*.sh
