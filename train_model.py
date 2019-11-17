@@ -8,7 +8,7 @@ from torch import optim
 from torch.optim import lr_scheduler
 
 import baseline.model
-import data.data_load
+from Data import data_load
 
 
 def get_rank1_corrects(outputs, labels):
@@ -121,7 +121,7 @@ if __name__ == '__main__':
 
     finetune_conv = False
     model = baseline.model.get_model(out_features=79, finetune_conv=finetune_conv, device=device)
-    dataloaders, dataset_sizes = data.data_load.get_data_loaders(train_csv=train_csv, val_csv=val_csv, data_dir=data_dir)
+    dataloaders, dataset_sizes = data_load.get_data_loaders(train_csv=train_csv, val_csv=val_csv, data_dir=data_dir)
 
     cross_entropy = nn.BCEWithLogitsLoss()
     sgd = optim.SGD(model.parameters(), lr=0.1, momentum=0.9)
