@@ -7,7 +7,8 @@ import torch.nn as nn
 from torch import optim
 from torch.optim import lr_scheduler
 
-import baseline.model
+from baseline import base_model
+from glore import glore_model
 import data.data_load
 
 
@@ -119,8 +120,11 @@ if __name__ == '__main__':
         data_dir = cmd_args[3]
         num_epochs = int(cmd_args[4])
 
-    finetune_conv = False
-    model = baseline.model.get_model(out_features=79, finetune_conv=finetune_conv, device=device)
+    bm = base_model.BaseModel()
+    gm = glore_model.GloreModel()
+
+    # model = bm.get_model(finetune_conv=False, device=device)
+    model = gm.get_model(finetune_conv=False, device=device)
     dataloaders, dataset_sizes = data.data_load.get_data_loaders(train_csv=train_csv, val_csv=val_csv, data_dir=data_dir)
 
     cross_entropy = nn.BCEWithLogitsLoss()
