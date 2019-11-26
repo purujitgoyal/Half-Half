@@ -9,7 +9,7 @@
 #
 #SBATCH --ntasks=1
 
-python -u test_model.py ./Data/val_ann_encoded.csv ../../Data ./model/model_baseline.wts
+python -u test_model.py ./Data/val_ann_encoded.csv ../../Data ./model/model_baseline
 #sleep 1
 exit
 
