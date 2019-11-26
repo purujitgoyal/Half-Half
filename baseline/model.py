@@ -13,6 +13,7 @@ def get_model(out_features, finetune_conv=False, device="cpu"):
     if not finetune_conv:
         for param in model.parameters():
             param.requires_grad = False
+    # Todo: experiment with finetune_conv = True
 
     in_features = model.fc.in_features
     model.fc = nn.Linear(in_features, out_features)
