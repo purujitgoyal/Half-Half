@@ -8,3 +8,5 @@
 /model_wts
 *.txt
 */logs/*
+model/*
+*/model/*

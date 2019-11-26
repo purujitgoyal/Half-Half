@@ -26,6 +26,7 @@ def get_data_loaders(val_csv, data_dir, batch_size=32, num_workers=0, train_csv=
 
     if train_csv is not None:
         # Training phase
+        print('Loading Data in training mode')
         train_dataset = HalfHalfLabelsDataset(csv_file=train_csv, root_dir=os.path.join(data_dir, 'train', 'images'),
                                           transform=transformation, num_classes=79)
         val_dataset = HalfHalfLabelsDataset(csv_file=val_csv, root_dir=os.path.join(data_dir, 'val', 'images'),
@@ -41,6 +42,7 @@ def get_data_loaders(val_csv, data_dir, batch_size=32, num_workers=0, train_csv=
 
     else:
         # Validation phase
+        print('Loading Data in validation mode')
         val_dataset = HalfHalfLabelsDataset(csv_file=val_csv, root_dir=os.path.join(data_dir, 'val', 'images'),
                                             transform=transformation, num_classes=79)
         image_datasets = {'val': val_dataset}
