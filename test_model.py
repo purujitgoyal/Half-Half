@@ -26,7 +26,7 @@ def get_rank1_corrects(outputs, labels):
 
 def test_model(model, model_dir, criterion, dataloaders, dataset_sizes, device):
     since = time.time()
-    model.load_state_dict(model_dir)
+    model.load_state_dict(torch.load(model_dir))
     model.eval()
 
     running_loss = 0.0
