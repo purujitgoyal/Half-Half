@@ -7,3 +7,9 @@
 __pycache__/*
 *.log
 model_wts
+*/__pycache__/*
+*.log
+/model_wts
+*.txt
+*/logs/*
+*.sh
