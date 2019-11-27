@@ -1,0 +1,4 @@
+image_id,object_names,object_ids
+8,"['keyboard', 'cup', 'mouse', 'chair', 'book']","[66, 41, 64, 56, 73]"
+9,"['chair', 'bottle', 'keyboard', 'book']","[56, 39, 66, 73]"
+14,"['bottle', 'book']","[39, 73]"

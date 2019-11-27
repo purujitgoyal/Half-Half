@@ -7,7 +7,7 @@ from model import Model
 
 class GloreModel(Model):
 
-    def get_model(self, finetune_conv=True, device="cpu"):
+    def get_model(self, out_features=80, finetune_conv=True, device="cpu"):
         model = self._get_resnet50()
 
         if not finetune_conv:
@@ -27,7 +27,7 @@ class GloreModel(Model):
 
         model.layer4 = res4_new
         in_features = model.fc.in_features
-        model.fc = nn.Linear(in_features, self.out_features)
+        model.fc = nn.Linear(in_features, out_features)
         model = model.to(device)
 
         return model

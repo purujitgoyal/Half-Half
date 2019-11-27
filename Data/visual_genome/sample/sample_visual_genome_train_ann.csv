@@ -1,0 +1,13 @@
+image_id,object_names,object_ids
+2,"['backpack', 'car']","[24, 2]"
+4,"['chair', 'couch', 'teddy bear']","[56, 57, 77]"
+5,"['chair', 'keyboard']","[56, 66]"
+6,"['bottle', 'fork', 'bowl', 'chair', 'apple']","[39, 42, 45, 56, 47]"
+7,"['keyboard', 'mouse', 'chair', 'book', 'laptop']","[66, 64, 56, 73, 63]"
+10,"['chair', 'bottle', 'keyboard', 'cup']","[56, 39, 66, 41]"
+12,"['cup', 'mouse']","[41, 64]"
+13,"['scissors', 'keyboard', 'cup', 'mouse', 'chair', 'book']","[76, 66, 41, 64, 56, 73]"
+15,"['keyboard', 'mouse']","[66, 64]"
+17,"['chair', 'keyboard', 'mouse', 'laptop']","[56, 66, 64, 63]"
+19,"['chair', 'keyboard', 'mouse']","[56, 66, 64]"
+20,"['bottle', 'keyboard', 'mouse', 'chair', 'book']","[39, 66, 64, 56, 73]"
