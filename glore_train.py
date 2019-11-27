@@ -11,7 +11,7 @@ from sklearn.metrics import multilabel_confusion_matrix
 from sklearn.metrics import classification_report
 from sklearn.metrics import accuracy_score
 
-from glore import glore_model
+from glore.glore_model import GloreModel
 from data.visual_genome import vg_data_load
 
 
@@ -115,17 +115,17 @@ if __name__ == '__main__':
         data_dir = cmd_args[3]
         num_epochs = int(cmd_args[4])
 
-    gm = glore_model.GloreModel()
+    gm = GloreModel()
 
     # model = bm.get_model(finetune_conv=False, device=device)
     model = gm.get_model(device=device)
     dataloaders, dataset_sizes = vg_data_load.get_data_loaders(train_csv=train_csv, val_csv=val_csv, data_dir=data_dir)
 
     cross_entropy = nn.BCEWithLogitsLoss()
-    sgd = optim.SGD(model.parameters(), lr=0.9, momentum=0.9)
-    # adam = optim.Adam(model.parameters(), lr=1, weight_decay=0.1)
+    # sgd = optim.SGD(model.parameters(), lr=0.9, momentum=0.9)
+    adam = optim.Adam(model.parameters(), lr=1, weight_decay=0.1)
 
-    exp_lr_scheduler = lr_scheduler.StepLR(sgd, step_size=20, gamma=0.99)
+    exp_lr_scheduler = lr_scheduler.StepLR(adam, step_size=20, gamma=0.99)
 
-    train_model(model, criterion=cross_entropy, optimizer=sgd, scheduler=exp_lr_scheduler, dataloaders=dataloaders,
+    train_model(model, criterion=cross_entropy, optimizer=adam, scheduler=exp_lr_scheduler, dataloaders=dataloaders,
                 dataset_sizes=dataset_sizes, device=device, num_epochs=num_epochs)

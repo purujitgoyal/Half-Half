@@ -1,7 +1,6 @@
 from torch import nn
-from torchvision import models
 
-from glore.gloreunit import GloreUnit
+from .gloreunit import GloreUnit
 from model import Model
 
 
