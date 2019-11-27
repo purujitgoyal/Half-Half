@@ -1,9 +1,12 @@
 *.iml
 *.xml
 .idea/*
-*/.ipynb_checkpoints/*
-*/.DS_Store
+**/.ipynb_checkpoints/*
+**/.DS_Store/*
+**/__pycache__/*
 __pycache__/*
+*.log
+model_wts
 */__pycache__/*
 *.log
 /model_wts
