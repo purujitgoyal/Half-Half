@@ -8,7 +8,6 @@ __pycache__/*
 *.log
 model_wts
 */__pycache__/*
-*.log
 /model_wts
 **/glore_model_wts
 *.txt
