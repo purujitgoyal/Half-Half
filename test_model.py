@@ -33,10 +33,10 @@ def get_MRR_corrects(outputs, labels):
         sorted_outputs, _ = torch.sort(output_i, descending=True)
 
         # Get rank of correct label in the list
-        r_i = (sorted_outputs == score_correct).nonzero().data.cpu().numpy()[0] + 1
+        r_i = (sorted_outputs == score_correct).nonzero().numpy()[0][0] + 1
         mrr_acc += 1/r_i
 
-    return torch.as_tensor(mrr_acc)
+    return mrr_acc
 
 
 def test_model(model, model_dir, criterion, dataloaders, dataset_sizes, device):
@@ -70,7 +70,7 @@ def test_model(model, model_dir, criterion, dataloaders, dataset_sizes, device):
 
     loss = running_loss / dataset_sizes['val']
     acc = running_corrects.double() / dataset_sizes['val']
-    mrr = running_mrr.double() / dataset_sizes['val']
+    mrr = running_mrr / dataset_sizes['val']
 
     print('{} Loss: {:.4f} Rank-1 Acc: {:.4f} MRR: {:.4f}'.format(
         'val', loss, acc, mrr))
