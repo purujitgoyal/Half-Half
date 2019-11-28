@@ -12,7 +12,7 @@ from sklearn.metrics import classification_report
 from sklearn.metrics import accuracy_score
 
 from glore.glore_model import GloreModel
-from data.visual_genome import vg_data_load
+from Data.visual_genome import vg_data_load
 
 
 def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_sizes, device, num_epochs=25):
