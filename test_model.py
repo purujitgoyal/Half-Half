@@ -33,7 +33,7 @@ def get_MRR_corrects(outputs, labels):
         sorted_outputs, _ = torch.sort(output_i, descending=True)
 
         # Get rank of correct label in the list
-        r_i = (sorted_outputs == score_correct).nonzero() + 1
+        r_i = (sorted_outputs == score_correct).nonzero().data.cpu().numpy()[0] + 1
         mrr_acc += 1/r_i
 
     return torch.as_tensor(mrr_acc)
@@ -41,7 +41,7 @@ def get_MRR_corrects(outputs, labels):
 
 def test_model(model, model_dir, criterion, dataloaders, dataset_sizes, device):
     since = time.time()
-    model.load_state_dict(torch.load(model_dir))
+    model.load_state_dict(torch.load(model_dir, map_location="cuda" if torch.cuda.is_available() else "cpu"))
     model.eval()
 
     running_loss = 0.0
