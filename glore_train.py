@@ -59,7 +59,7 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
                 # statistics
                 running_loss += loss.item() * inputs.size(0)
                 preds_ = torch.sigmoid(outputs)
-                preds_np = preds_.detach().numpy()
+                preds_np = preds_.detach().cpu().numpy()
                 preds_np = np.where(preds_np > 0.5, 1, 0)
                 preds_ = torch.from_numpy(preds_np)
                 if phase == 'train':
