@@ -12,6 +12,7 @@ from Data import data_load
 
 
 def get_rank1_corrects(outputs, labels):
+    print(outputs.size(), labels.size())
     rank1_acc = 0
 
     for i in range(outputs.size()[0]):
@@ -22,6 +23,10 @@ def get_rank1_corrects(outputs, labels):
             rank1_acc += 1
 
     return torch.as_tensor(rank1_acc)
+
+
+def get_MRR_corrects(outputs, labels):
+    print(outputs.size(), labels.size())
 
 
 def test_model(model, model_dir, criterion, dataloaders, dataset_sizes, device):
@@ -59,7 +64,7 @@ def test_model(model, model_dir, criterion, dataloaders, dataset_sizes, device):
     print()
 
     time_elapsed = time.time() - since
-    print('Training complete in {:.0f}m {:.0f}s'.format(
+    print('Testing complete in {:.0f}m {:.0f}s'.format(
         time_elapsed // 60, time_elapsed % 60))
 
 
