@@ -33,7 +33,7 @@ def get_MRR_corrects(outputs, labels):
         sorted_outputs, _ = torch.sort(output_i, descending=True)
 
         # Get rank of correct label in the list
-        r_i = (sorted_outputs == score_correct).nonzero().numpy()[0][0] + 1
+        r_i = (sorted_outputs == score_correct).nonzero().cpu().numpy()[0][0] + 1
         mrr_acc += 1/r_i
 
     return mrr_acc
