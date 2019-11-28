@@ -62,6 +62,7 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
                 preds_np = preds_.cpu().detach().numpy()
                 preds_np = np.where(preds_np > 0.5, 1, 0)
                 preds_ = torch.from_numpy(preds_np)
+                labels_ohe = labels_ohe.cpu()
                 if phase == 'train':
                     running_corrects += accuracy_score(labels_ohe, preds_)
                 if phase == 'val':
