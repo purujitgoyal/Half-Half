@@ -12,12 +12,10 @@ from Data import data_load
 
 
 def get_rank1_corrects(outputs, labels):
-    print(outputs.size(), labels.size())
     rank1_acc = 0
 
     for i in range(outputs.size()[0]):
         output_i = outputs[i][labels[i]]
-        # print(output_i)
         _, max_index = torch.max(output_i, 0)
         if max_index == 0:
             rank1_acc += 1
@@ -26,7 +24,19 @@ def get_rank1_corrects(outputs, labels):
 
 
 def get_MRR_corrects(outputs, labels):
-    print(outputs.size(), labels.size())
+    mrr_acc = 0
+
+    for i in range(outputs.size()[0]):
+        output_i = outputs[i][labels[i]]
+        # first value in label[i] is the correct label
+        score_correct = output_i[0]  # Score of correct label
+        sorted_outputs, _ = torch.sort(output_i, descending=True)
+
+        # Get rank of correct label in the list
+        r_i = (sorted_outputs == score_correct).nonzero() + 1
+        mrr_acc += 1/r_i
+
+    return torch.as_tensor(mrr_acc)
 
 
 def test_model(model, model_dir, criterion, dataloaders, dataset_sizes, device):
@@ -36,6 +46,7 @@ def test_model(model, model_dir, criterion, dataloaders, dataset_sizes, device):
 
     running_loss = 0.0
     running_corrects = 0
+    running_mrr = 0
 
     # Iterate over data.
     for inputs, labels_ohe, labels in dataloaders['val']:
@@ -55,12 +66,14 @@ def test_model(model, model_dir, criterion, dataloaders, dataset_sizes, device):
         _, target = labels_ohe.max(1)
 
         running_corrects += get_rank1_corrects(outputs, labels)
+        running_mrr += get_MRR_corrects(outputs, labels)
 
     loss = running_loss / dataset_sizes['val']
     acc = running_corrects.double() / dataset_sizes['val']
+    mrr = running_mrr.double() / dataset_sizes['val']
 
-    print('{} Loss: {:.4f} Acc: {:.4f}'.format(
-        'val', loss, acc))
+    print('{} Loss: {:.4f} Rank-1 Acc: {:.4f} MRR: {:.4f}'.format(
+        'val', loss, acc, mrr))
     print()
 
     time_elapsed = time.time() - since
