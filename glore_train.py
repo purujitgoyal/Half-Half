@@ -69,7 +69,7 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
                     running_corrects += accuracy_score(labels_ohe, preds_)
 
                 # print(multilabel_confusion_matrix(labels_ohe, preds_))
-                print(classification_report(labels_ohe, preds_))
+                # print(classification_report(labels_ohe, preds_))
             if phase == 'train':
                 scheduler.step()
 
