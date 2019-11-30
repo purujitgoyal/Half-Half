@@ -67,7 +67,8 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
                 #     running_corrects += accuracy_score(labels_ohe, preds_, normalize=False)
                 # if phase == 'val':
                 #     running_corrects += accuracy_score(labels_ohe, preds_, normalize=False)
-
+                print(labels_ohe)
+                print(preds_)
                 if phase == 'train':
                     running_corrects += recall_score(labels_ohe, preds_)
                 if phase == 'val':
