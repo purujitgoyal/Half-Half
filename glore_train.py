@@ -9,7 +9,7 @@ from torch import optim
 from torch.optim import lr_scheduler
 from sklearn.metrics import multilabel_confusion_matrix
 from sklearn.metrics import classification_report
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, recall_score
 
 from glore.glore_model import GloreModel
 from Data.visual_genome import vg_data_load
@@ -63,10 +63,15 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
                 preds_np = np.where(preds_np > 0.5, 1, 0)
                 preds_ = torch.from_numpy(preds_np)
                 labels_ohe = labels_ohe.cpu()
+                # if phase == 'train':
+                #     running_corrects += accuracy_score(labels_ohe, preds_, normalize=False)
+                # if phase == 'val':
+                #     running_corrects += accuracy_score(labels_ohe, preds_, normalize=False)
+
                 if phase == 'train':
-                    running_corrects += accuracy_score(labels_ohe, preds_, normalize=False)
+                    running_corrects += recall_score(labels_ohe, preds_)
                 if phase == 'val':
-                    running_corrects += accuracy_score(labels_ohe, preds_, normalize=False)
+                    running_corrects += recall_score(labels_ohe, preds_)
 
                 # print(multilabel_confusion_matrix(labels_ohe, preds_))
                 # print(classification_report(labels_ohe, preds_))
@@ -78,7 +83,7 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
             epoch_acc = running_corrects * 1.0 / dataset_sizes[phase]
             # epoch_acc = running_corrects
 
-            print('{} Loss: {:.4f} Acc: {:.4f}'.format(
+            print('{} Loss: {:.4f} Recall: {:.4f}'.format(
                 phase, epoch_loss, epoch_acc))
 
             # deep copy the model
