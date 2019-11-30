@@ -15,6 +15,17 @@ from glore.glore_model import GloreModel
 from Data.visual_genome import vg_data_load
 
 
+def get_accuracy_score(y_true, y_pred):
+    y_true_np = y_true.detach().numpy()
+    y_pred_np = y_pred.detach().numpy()
+
+    true_index = np.argmax(y_true_np)
+    y_pred_corr = y_pred_np[true_index]
+
+    n_corr = np.sum(y_pred_corr == 1)
+    return torch.tensor(n_corr)
+
+
 def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_sizes, device, num_epochs=25):
     since = time.time()
 
@@ -34,6 +45,7 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
 
             running_loss = 0.0
             running_corrects = 0
+            running_recall = 0.0
 
             # Iterate over data.
             for inputs, labels_ohe in dataloaders[phase]:
@@ -63,15 +75,21 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
                 preds_np = np.where(preds_np > 0.5, 1, 0)
                 preds_ = torch.from_numpy(preds_np)
                 labels_ohe = labels_ohe.cpu()
+
                 # if phase == 'train':
                 #     running_corrects += accuracy_score(labels_ohe, preds_, normalize=False)
                 # if phase == 'val':
                 #     running_corrects += accuracy_score(labels_ohe, preds_, normalize=False)
 
                 if phase == 'train':
-                    running_corrects += recall_score(labels_ohe, preds_, average="micro")
+                    running_recall += recall_score(labels_ohe, preds_, average="micro")
                 if phase == 'val':
-                    running_corrects += recall_score(labels_ohe, preds_, average="micro")
+                    running_recall += recall_score(labels_ohe, preds_, average="micro")
+
+                if phase == 'train':
+                    running_corrects += get_accuracy_score(labels_ohe, preds_)
+                if phase == 'val':
+                    running_corrects += get_accuracy_score(labels_ohe, preds_)
 
                 # print(multilabel_confusion_matrix(labels_ohe, preds_))
                 # print(classification_report(labels_ohe, preds_))
@@ -80,11 +98,12 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
 
             epoch_loss = running_loss / dataset_sizes[phase]
             # epoch_loss = running_loss
-            epoch_acc = running_corrects * 1.0 / dataset_sizes[phase]
+            epoch_acc = running_corrects.double() / dataset_sizes[phase]
+            epoch_recall = running_recall / dataset_sizes[phase]
             # epoch_acc = running_corrects
 
-            print('{} Loss: {:.4f} Recall: {:.4f}'.format(
-                phase, epoch_loss, epoch_acc))
+            print('{} Loss: {:.4f} Acc: {:.4f} Recall: {:.4f}'.format(
+                phase, epoch_loss, epoch_acc, epoch_recall))
 
             # deep copy the model
             if phase == 'val' and epoch_acc > best_acc:
