@@ -64,19 +64,19 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
                 preds_ = torch.from_numpy(preds_np)
                 labels_ohe = labels_ohe.cpu()
                 if phase == 'train':
-                    running_corrects += accuracy_score(labels_ohe, preds_)
+                    running_corrects += accuracy_score(labels_ohe, preds_, normalize=False)
                 if phase == 'val':
-                    running_corrects += accuracy_score(labels_ohe, preds_)
+                    running_corrects += accuracy_score(labels_ohe, preds_, normalize=False)
 
                 # print(multilabel_confusion_matrix(labels_ohe, preds_))
                 # print(classification_report(labels_ohe, preds_))
             if phase == 'train':
                 scheduler.step()
 
-            # epoch_loss = running_loss / dataset_sizes[phase]
-            epoch_loss = running_loss
-            # epoch_acc = running_corrects.double() / dataset_sizes[phase]
-            epoch_acc = running_corrects
+            epoch_loss = running_loss / dataset_sizes[phase]
+            # epoch_loss = running_loss
+            epoch_acc = running_corrects.double() / dataset_sizes[phase]
+            # epoch_acc = running_corrects
 
             print('{} Loss: {:.4f} Acc: {:.4f}'.format(
                 phase, epoch_loss, epoch_acc))
