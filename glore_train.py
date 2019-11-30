@@ -75,7 +75,7 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
 
             epoch_loss = running_loss / dataset_sizes[phase]
             # epoch_loss = running_loss
-            epoch_acc = running_corrects.double() / dataset_sizes[phase]
+            epoch_acc = running_corrects * 1.0 / dataset_sizes[phase]
             # epoch_acc = running_corrects
 
             print('{} Loss: {:.4f} Acc: {:.4f}'.format(
