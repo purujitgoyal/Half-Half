@@ -25,7 +25,7 @@ def get_rank1_corrects(outputs, labels):
     return torch.as_tensor(rank1_acc)
 
 
-def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_sizes, device, num_epochs=25):
+def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_sizes, device, model_dir, num_epochs=25):
     since = time.time()
 
     best_model_wts = copy.deepcopy(model.state_dict())
@@ -86,10 +86,13 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
                 phase, epoch_loss, epoch_acc))
 
             # deep copy the model
+
+            # Todo: Apply early stopping using val_acc, plot losses
+
             if phase == 'val' and epoch_acc > best_acc:
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
-                torch.save(model.state_dict(), "./model_wts")
+                torch.save(model.state_dict(), model_dir)
 
         print()
 
@@ -111,7 +114,7 @@ if __name__ == '__main__':
     data_dir = "./data/sample"
     num_epochs = 25
 
-    if len(cmd_args) != 5:
+    if len(cmd_args) != 6:
         print("Check your arguments")
         print("Running on sample data")
     else:
@@ -119,6 +122,7 @@ if __name__ == '__main__':
         val_csv = cmd_args[2]
         data_dir = cmd_args[3]
         num_epochs = int(cmd_args[4])
+        model_dir = cmd_args[5]
 
     bm = base_model.BaseModel()
     gm = glore_model.GloreModel()
@@ -134,4 +138,4 @@ if __name__ == '__main__':
     exp_lr_scheduler = lr_scheduler.StepLR(sgd, step_size=10, gamma=0.9)
 
     train_model(model, criterion=cross_entropy, optimizer=sgd, scheduler=exp_lr_scheduler, dataloaders=dataloaders,
-                dataset_sizes=dataset_sizes, device=device, num_epochs=num_epochs)
+                dataset_sizes=dataset_sizes, device=device, model_dir=model_dir, num_epochs=num_epochs)
