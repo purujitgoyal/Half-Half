@@ -19,7 +19,7 @@ def get_accuracy_score(y_true, y_pred):
     y_true_np = y_true.detach().numpy()
     y_pred_np = y_pred.detach().numpy()
 
-    true_index = np.argmax(y_true_np)
+    true_index = np.argmax(y_true_np, axis=1)
     y_pred_corr = y_pred_np[true_index]
 
     n_corr = np.sum(y_pred_corr == 1)
