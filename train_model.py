@@ -9,7 +9,7 @@ from torch.optim import lr_scheduler
 
 from baseline import base_model
 from glore import glore_model
-from Data.utils import data_load
+import data.data_load
 
 
 def get_rank1_corrects(outputs, labels):
@@ -125,7 +125,7 @@ if __name__ == '__main__':
 
     # model = bm.get_model(finetune_conv=False, device=device)
     model = gm.get_model(finetune_conv=True, device=device)
-    dataloaders, dataset_sizes = data_load.get_data_loaders(train_csv=train_csv, val_csv=val_csv, data_dir=data_dir)
+    dataloaders, dataset_sizes = data.data_load.get_data_loaders(train_csv=train_csv, val_csv=val_csv, data_dir=data_dir)
 
     cross_entropy = nn.BCEWithLogitsLoss()
     sgd = optim.SGD(model.parameters(), lr=0.1, momentum=0.9)
