@@ -66,10 +66,13 @@ def train_model(model, embedding_inp, criterion, optimizer, scheduler, dataloade
                 else:
                     inp_var = torch.autograd.Variable(embedding, requires_grad=False).float().detach()  # one hot. # pickle of word2vec.
 
+                inp_var = inp_var.unsqueeze(0)  # add batch size dummy
                 inp_var = inp_var.to(device)
 
                 with torch.set_grad_enabled(phase == 'train'):
-                    print('inputs: ', inputs.size())
+                    # inputs: (batch x channels x 448 x 448)
+                    # inp_var: (batch x num_classes x 300)
+                    print('inp_var', inp_var.size())
                     outputs = model(inputs, inp_var)
                     _, preds = torch.max(outputs, 1)
                     loss = criterion(outputs, labels_ohe.float())
