@@ -60,11 +60,11 @@ def train_model(model, embedding_inp, criterion, optimizer, scheduler, dataloade
                 optimizer.zero_grad()
                 # forward
                 # track history if only in train
-
+                embedding = torch.from_numpy(embedding_inp)
                 if phase == 'train':
-                    inp_var = torch.autograd.Variable(embedding_inp, requires_grad=True).float().detach()  # one hot. # pickle of word2vec.
+                    inp_var = torch.autograd.Variable(embedding, requires_grad=True).float().detach()  # one hot. # pickle of word2vec.
                 else:
-                    inp_var = torch.autograd.Variable(embedding_inp, requires_grad=False).float().detach()  # one hot. # pickle of word2vec.
+                    inp_var = torch.autograd.Variable(embedding, requires_grad=False).float().detach()  # one hot. # pickle of word2vec.
 
                 inp_var = inp_var.to(device)
 
