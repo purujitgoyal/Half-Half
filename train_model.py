@@ -140,7 +140,7 @@ if __name__ == '__main__':
     gm = glore_model.GloreModel()
     gcn = gcn_model.GcnModel()
     num_classes = 79
-    finetune_conv = True
+    finetune_conv = False
     model_dir = model_dir + "_" + str(finetune_conv)
     # model = bm.get_model(finetune_conv=finetune_conv, device=device)
     # model = gm.get_model(out_features=num_classes, finetune_conv=finetune_conv, device=device)  # 79 classes for halfhalf dataset
