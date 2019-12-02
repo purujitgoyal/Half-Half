@@ -9,7 +9,7 @@
 #
 #SBATCH --ntasks=1
 
-python -u train_model.py ./Data/train_ann_encoded.csv ./Data/val_ann_encoded.csv ../../Data 100 ./model/model_glore_baseline ./data/baseline_glove_word2vec.pkl ./data/baseline_left_labels.pkl
+python -u train_model.py ./Data/train_ann_encoded.csv ./Data/val_ann_encoded.csv ../../Data 100 ./model/model_glore_baseline ./Data/baseline_glove_word2vec.pkl ./Data/baseline_left_labels.pkl
 #sleep 1
 exit
 
