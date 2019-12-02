@@ -21,7 +21,7 @@ def _data_transformation():
     return transformation
 
 
-def get_data_loaders(val_csv, data_dir, batch_size=32, num_workers=0, train_csv=None):
+def get_data_loaders(val_csv, data_dir, batch_size=8, num_workers=0, train_csv=None):
     transformation = _data_transformation()
 
     if train_csv is not None:
