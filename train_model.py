@@ -150,7 +150,7 @@ if __name__ == '__main__':
     # Todo: add no_grad = True for word embeddings. Need to tune in training phase? check L421 engine.py (ML-GCN)
     # Todo: check with image_feaures as 448 in ML-GCN
 
-    model = gcn.get_model(t=0.4, adj_file=adj_file, out_features=num_classes, finetune_conv=False, device=device)
+    model = gcn.get_model(t=0.4, adj_file=adj_file, out_features=num_classes, finetune_conv=True, device=device)
 
     dataloaders, dataset_sizes = data.data_load.get_data_loaders(train_csv=train_csv, val_csv=val_csv, data_dir=data_dir)
 
