@@ -148,7 +148,7 @@ if __name__ == '__main__':
 
     gm = GloreModel()
     finetune_conv = False
-    model_dir = model_dir + str(finetune_conv)
+    model_dir = model_dir + "_" + str(finetune_conv)
 
     # model = bm.get_model(finetune_conv=finetune_conv, device=device)
     model = gm.get_model(device=device, finetune_conv=finetune_conv)
