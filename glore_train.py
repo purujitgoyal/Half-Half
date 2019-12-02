@@ -12,7 +12,7 @@ from sklearn.metrics import classification_report
 from sklearn.metrics import accuracy_score, recall_score
 
 from glore.glore_model import GloreModel
-from data.visual_genome import vg_data_load
+from Data.visual_genome import vg_data_load
 
 
 def get_accuracy_score(y_true, y_pred):
@@ -148,7 +148,7 @@ if __name__ == '__main__':
 
     gm = GloreModel()
     finetune_conv = False
-    model_dir = model_dir + str(finetune_conv)
+    model_dir = model_dir + "_" + str(finetune_conv)
 
     # model = bm.get_model(finetune_conv=finetune_conv, device=device)
     model = gm.get_model(device=device, finetune_conv=finetune_conv)
