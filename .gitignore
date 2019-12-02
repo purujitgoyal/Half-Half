@@ -12,5 +12,4 @@ model_wts
 **/glore_model_wts
 *.txt
 */logs/*
-/Data/*.pkl
 /model/*
