@@ -21,7 +21,7 @@ def _data_transformation():
     return transformation
 
 
-def get_data_loaders(train_csv, val_csv, data_dir, batch_size=32, num_workers=0):
+def get_data_loaders(train_csv, val_csv, data_dir, batch_size=8, num_workers=0):
     transformation = _data_transformation()
     train_dataset = VisualGenomeDataset(csv_file=train_csv, root_dir=os.path.join(data_dir, 'images'),
                                         transform=transformation, num_classes=80)
