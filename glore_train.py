@@ -12,7 +12,7 @@ from sklearn.metrics import classification_report
 from sklearn.metrics import accuracy_score, recall_score
 
 from glore.glore_model import GloreModel
-from data.visual_genome import vg_data_load
+from Data.visual_genome import vg_data_load
 
 
 def get_accuracy_score(y_true, y_pred):
