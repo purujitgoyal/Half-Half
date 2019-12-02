@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-#SBATCH --job-name=glorehalf
-#SBATCH --output=logshalf/hh_%j.txt  # output file
-#SBATCH -e logshalf/hh_%j.err        # File to which STDERR will be written
+#SBATCH --job-name=gcnhalf
+#SBATCH --output=logsgcnhalf/hh_%j.txt  # output file
+#SBATCH -e logsgcnhalf/hh_%j.err        # File to which STDERR will be written
 #SBATCH --partition=2080ti-long # Partition to submit to
 #SBATCH --gres=gpu:1
 #SBATCH --mem=80G
