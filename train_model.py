@@ -128,7 +128,7 @@ if __name__ == '__main__':
     gm = glore_model.GloreModel()
 
     # model = bm.get_model(finetune_conv=False, device=device)
-    model = gm.get_model(out_features=79, finetune_conv=True, device=device)  # 79 classes for halfhalf dataset
+    model = gm.get_model(out_features=79, finetune_conv=False, device=device)  # 79 classes for halfhalf dataset
 
     dataloaders, dataset_sizes = data.data_load.get_data_loaders(train_csv=train_csv, val_csv=val_csv, data_dir=data_dir)
 
