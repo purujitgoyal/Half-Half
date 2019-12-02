@@ -12,7 +12,7 @@ from sklearn.metrics import classification_report
 from sklearn.metrics import accuracy_score, recall_score
 
 from glore.glore_model import GloreModel
-from Data.visual_genome import vg_data_load
+from data.visual_genome import vg_data_load
 
 
 def get_accuracy_score(y_true, y_pred):
@@ -50,6 +50,7 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
             # Iterate over data.
             for inputs, labels_ohe in dataloaders[phase]:
                 inputs = inputs.to(device)
+                # print(inputs)
                 labels_ohe = labels_ohe.to(device)
                 # print(inputs.size())
                 # print(labels_ohe.size())
@@ -61,6 +62,7 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
                 # track history if only in train
                 with torch.set_grad_enabled(phase == 'train'):
                     outputs = model(inputs)
+                    _, preds = torch.max(outputs, 1)
                     loss = criterion(outputs, labels_ohe.float())
 
                     # backward + optimize only if in training phase
@@ -70,8 +72,10 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
 
                 # statistics
                 running_loss += loss.item() * inputs.size(0)
+                _, target = labels_ohe.max(1)
                 preds_ = torch.sigmoid(outputs)
                 preds_np = preds_.cpu().detach().numpy()
+                # # print(preds_np)
                 preds_np = np.where(preds_np > 0.5, 1, 0)
                 preds_ = torch.from_numpy(preds_np)
                 labels_ohe = labels_ohe.cpu()
@@ -87,9 +91,9 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
                     running_recall += recall_score(labels_ohe, preds_, average="micro")
 
                 if phase == 'train':
-                    running_corrects += get_accuracy_score(labels_ohe, preds_)
+                    running_corrects += torch.sum(preds == target)
                 if phase == 'val':
-                    running_corrects += get_accuracy_score(labels_ohe, preds_)
+                    running_corrects += torch.sum(preds == target)
 
                 # print(multilabel_confusion_matrix(labels_ohe, preds_))
                 # print(classification_report(labels_ohe, preds_))
@@ -130,6 +134,7 @@ if __name__ == '__main__':
     val_csv = "../data/visual_genome/sample/sample_visual_genome_val_ann.csv"
     data_dir = "../data/visual_genome/sample/"
     num_epochs = 25
+    model_dir = '.'
 
     if len(cmd_args) != 6:
         print("Check your arguments")
@@ -150,10 +155,10 @@ if __name__ == '__main__':
     dataloaders, dataset_sizes = vg_data_load.get_data_loaders(train_csv=train_csv, val_csv=val_csv, data_dir=data_dir)
 
     cross_entropy = nn.BCEWithLogitsLoss()
-    # sgd = optim.SGD(model.parameters(), lr=0.9, momentum=0.9)
-    adam = optim.Adam(model.parameters(), lr=1, weight_decay=0.1)
+    sgd = optim.SGD(model.parameters(), lr=0.9, momentum=0.9, weight_decay=0.01)
+    # adam = optim.Adam(model.parameters(), lr=0.1, weight_decay=0.1)
 
-    exp_lr_scheduler = lr_scheduler.StepLR(adam, step_size=20, gamma=0.99)
+    exp_lr_scheduler = lr_scheduler.StepLR(sgd, step_size=20, gamma=0.99)
 
-    train_model(model, criterion=cross_entropy, optimizer=adam, scheduler=exp_lr_scheduler, dataloaders=dataloaders,
+    train_model(model, criterion=cross_entropy, optimizer=sgd, scheduler=exp_lr_scheduler, dataloaders=dataloaders,
                 dataset_sizes=dataset_sizes, device=device, model_dir=model_dir, num_epochs=num_epochs)

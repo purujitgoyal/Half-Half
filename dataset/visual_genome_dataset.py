@@ -38,8 +38,7 @@ class VisualGenomeDataset(Dataset):
         if image.getbands()[0] == 'L':
             image = image.convert('RGB')
         image = ToTensor()(image)
-        labels = json.loads(self.labels_df.iloc[idx, 2])
-        # print(type(labels))
+        labels = int(self.labels_df.iloc[idx, 2])
         labels = torch.tensor(labels)
         label_ohe = np.zeros(self.num_classes,)
         label_ohe[labels] = 1

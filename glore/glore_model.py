@@ -6,7 +6,7 @@ from model import Model
 
 class GloreModel(Model):
 
-    def get_model(self, out_features=80, finetune_conv=True, device="cpu"):
+    def get_model(self, out_features=78, finetune_conv=True, device="cpu"):
         model = self._get_resnet50()
 
         if not finetune_conv:
