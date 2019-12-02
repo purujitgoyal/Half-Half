@@ -1,4 +1,5 @@
 import copy
+import pickle
 import sys
 import time
 
@@ -27,7 +28,7 @@ def get_accuracy_score(y_true, y_pred):
     return torch.tensor(n_corr)
 
 
-def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_sizes, device, num_epochs=25):
+def train_model(model, embedding_inp, criterion, optimizer, scheduler, dataloaders, dataset_sizes, device, model_dir, num_epochs=25):
     since = time.time()
 
     best_model_wts = copy.deepcopy(model.state_dict())
@@ -58,10 +59,16 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
                 # zero the parameter gradients
                 optimizer.zero_grad()
 
+                embedding = torch.from_numpy(embedding_inp)
+                inp_var = torch.autograd.Variable(embedding, requires_grad=False).float().detach()  # one hot. # pickle of word2vec.
+
+                inp_var = inp_var.unsqueeze(0)  # add batch size dummy
+                inp_var = inp_var.to(device)
+
                 # forward
                 # track history if only in train
                 with torch.set_grad_enabled(phase == 'train'):
-                    outputs = model(inputs)
+                    outputs = model(inputs, inp_var)
                     loss = criterion(outputs, labels_ohe.float())
 
                     # backward + optimize only if in training phase
@@ -110,7 +117,7 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
             if phase == 'val' and epoch_acc > best_acc:
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
-                torch.save(model.state_dict(), "./glore_model_wts")
+                torch.save(model.state_dict(), model_dir)
 
         print()
 
@@ -132,7 +139,7 @@ if __name__ == '__main__':
     data_dir = "../data/visual_genome/sample/"
     num_epochs = 25
 
-    if len(cmd_args) != 5:
+    if len(cmd_args) != 8:
         print("Check your arguments")
         print("Running on sample data")
     else:
@@ -140,11 +147,16 @@ if __name__ == '__main__':
         val_csv = cmd_args[2]
         data_dir = cmd_args[3]
         num_epochs = int(cmd_args[4])
+        model_dir = cmd_args[5]
+        pkl_file = cmd_args[6]
+        adj_file = cmd_args[7]
 
-    gcn = GloreModel()
-
-    # model = bm.get_model(finetune_conv=False, device=device)
-    model = gcn.get_model(device=device)
+    gcn = GcnModel()
+    finetune_conv = False
+    model_dir = model_dir + str(finetune_conv)
+    num_classes = 80
+    # model = bm.get_model(finetune_conv=finetune_conv, device=device)
+    model = gcn.get_model(t=0.4, adj_file=adj_file, out_features=num_classes, finetune_conv=finetune_conv, device=device)
     dataloaders, dataset_sizes = vg_data_load.get_data_loaders(train_csv=train_csv, val_csv=val_csv, data_dir=data_dir)
 
     cross_entropy = nn.BCEWithLogitsLoss()
@@ -153,5 +165,8 @@ if __name__ == '__main__':
 
     exp_lr_scheduler = lr_scheduler.StepLR(adam, step_size=20, gamma=0.99)
 
-    train_model(model, criterion=cross_entropy, optimizer=adam, scheduler=exp_lr_scheduler, dataloaders=dataloaders,
-                dataset_sizes=dataset_sizes, device=device, num_epochs=num_epochs)
+    with open(pkl_file, "rb") as f:
+        inp = pickle.load(f)
+
+    train_model(model, inp, criterion=cross_entropy, optimizer=adam, scheduler=exp_lr_scheduler, dataloaders=dataloaders,
+                dataset_sizes=dataset_sizes, device=device, model_dir=model_dir, num_epochs=num_epochs)
