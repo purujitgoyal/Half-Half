@@ -152,7 +152,7 @@ if __name__ == '__main__':
         adj_file = cmd_args[7]
 
     gcn = GcnModel()
-    finetune_conv = False
+    finetune_conv = True
     model_dir = model_dir + str(finetune_conv)
     num_classes = 80
     # model = bm.get_model(finetune_conv=finetune_conv, device=device)
