@@ -9,6 +9,8 @@ from torch.optim import lr_scheduler
 
 from baseline import base_model
 from glore import glore_model
+from gcn import gcn_model
+
 import data.data_load
 
 
@@ -126,9 +128,13 @@ if __name__ == '__main__':
 
     bm = base_model.BaseModel()
     gm = glore_model.GloreModel()
+    gcn = gcn_model.GcnModel()
+    num_classes = 79
 
     # model = bm.get_model(finetune_conv=False, device=device)
-    model = gm.get_model(out_features=79, finetune_conv=True, device=device)  # 79 classes for halfhalf dataset
+    # model = gm.get_model(out_features=num_classes, finetune_conv=True, device=device)  # 79 classes for halfhalf dataset
+
+    model = gcn.get_model(t=0.4, adj_file='./data/baseline_left_labels.pkl', out_features=num_classes, finetune_conv=False, device=device)
 
     dataloaders, dataset_sizes = data.data_load.get_data_loaders(train_csv=train_csv, val_csv=val_csv, data_dir=data_dir)
 
