@@ -7,6 +7,8 @@ from dataset.half_half_dataset import HalfHalfLabelsDataset
 import matplotlib.pyplot as plt
 import numpy as np
 
+from gcn.util import MultiScaleCrop, Warp
+
 
 def _data_transformation():
     transformation = transforms.Compose([
@@ -21,11 +23,36 @@ def _data_transformation():
     return transformation
 
 
+def train_data_transformation():
+    transformation = transforms.Compose([
+        transforms.ToPILImage(),
+        transforms.Resize((448, 448)),
+        MultiScaleCrop(448, scales=(1.0, 0.875, 0.75, 0.66, 0.5), max_distort=2),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    ])
+
+    return transformation
+
+
+def val_data_transformation():
+    transformation = transforms.Compose([
+        transforms.ToPILImage(),
+        transforms.Resize((448, 448)),
+        Warp(448),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+
+    ])
+
+    return transformation
+
 def get_data_loaders(val_csv, data_dir, batch_size=8, num_workers=0, train_csv=None):
-    transformation = _data_transformation()
+    # transformation = _data_transformation()
 
     if train_csv is not None:
         # Training phase
+        transformation = train_data_transformation()
         print('Loading Data in training mode')
         train_dataset = HalfHalfLabelsDataset(csv_file=train_csv, root_dir=os.path.join(data_dir, 'train', 'images'),
                                           transform=transformation, num_classes=79)
@@ -42,6 +69,7 @@ def get_data_loaders(val_csv, data_dir, batch_size=8, num_workers=0, train_csv=N
 
     else:
         # Validation phase
+        transformation = val_data_transformation()
         print('Loading Data in validation mode')
         val_dataset = HalfHalfLabelsDataset(csv_file=val_csv, root_dir=os.path.join(data_dir, 'val', 'images'),
                                             transform=transformation, num_classes=79)
