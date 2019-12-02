@@ -3,7 +3,7 @@
 #SBATCH --job-name=gcnhalf
 #SBATCH --output=logsgcnhalf/hh_%j.txt  # output file
 #SBATCH -e logsgcnhalf/hh_%j.err        # File to which STDERR will be written
-#SBATCH --partition=titanx-long # Partition to submit to
+#SBATCH --partition=m40-long # Partition to submit to
 #SBATCH --gres=gpu:1
 #SBATCH --mem=80G
 #
