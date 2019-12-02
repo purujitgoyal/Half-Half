@@ -61,7 +61,7 @@ def train_model(model, embedding_inp, criterion, optimizer, scheduler, dataloade
                 # forward
                 # track history if only in train
                 embedding = torch.from_numpy(embedding_inp)
-                inp_var = torch.autograd.Variable(embedding, requires_grad=False).float().detach()  # one hot. # pickle of word2vec.
+                inp_var = torch.autograd.Variable(embedding).float().detach()  # one hot. # pickle of word2vec.
 
                 inp_var = inp_var.unsqueeze(0)  # add batch size dummy
                 inp_var = inp_var.to(device)
@@ -146,7 +146,6 @@ if __name__ == '__main__':
     # model = gm.get_model(out_features=num_classes, finetune_conv=finetune_conv, device=device)  # 79 classes for halfhalf dataset
 
     # Todo: add no_grad = True for word embeddings. Need to tune in training phase? check L421 engine.py (ML-GCN)
-    # Todo: check with image_feaures as 448 in ML-GCN
 
     model = gcn.get_model(t=0.4, adj_file=adj_file, out_features=num_classes, finetune_conv=finetune_conv, device=device)
 

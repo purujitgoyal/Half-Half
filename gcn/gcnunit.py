@@ -41,7 +41,7 @@ class GraphConvolution(nn.Module):
 
 
 class GCNResnet(nn.Module):
-    def __init__(self, model, num_classes, in_channel=300, t=0, adj_file=None):
+    def __init__(self, model, num_classes, finetune_conv=False, in_channel=300, t=0, adj_file=None):
         super(GCNResnet, self).__init__()
         self.features = nn.Sequential(
             model.conv1,
@@ -53,6 +53,11 @@ class GCNResnet(nn.Module):
             model.layer3,
             model.layer4,
         )
+
+        if not finetune_conv:
+            for param in self.features.parameters():
+                param.requires_grad = False
+
         self.num_classes = num_classes
         self.pooling = nn.MaxPool2d(14, 14)
 
