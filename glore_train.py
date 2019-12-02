@@ -142,9 +142,11 @@ if __name__ == '__main__':
         model_dir = cmd_args[5]
 
     gm = GloreModel()
+    finetune_conv = False
+    model_dir = model_dir + str(finetune_conv)
 
-    # model = bm.get_model(finetune_conv=False, device=device)
-    model = gm.get_model(device=device)
+    # model = bm.get_model(finetune_conv=finetune_conv, device=device)
+    model = gm.get_model(device=device, finetune_conv=finetune_conv)
     dataloaders, dataset_sizes = vg_data_load.get_data_loaders(train_csv=train_csv, val_csv=val_csv, data_dir=data_dir)
 
     cross_entropy = nn.BCEWithLogitsLoss()
