@@ -14,6 +14,11 @@ class Model(ABC):
         resnet50 = models.resnet50(pretrained=pretrained)
         return resnet50
 
+    @staticmethod
+    def _get_resnet101(pretrained=True):
+        resnet101 = models.resnet101(pretrained=pretrained)
+        return resnet101
+
     @abstractmethod
     def get_model(self, finetune_conv=False, device="cpu"):
         pass
