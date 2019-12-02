@@ -1,4 +1,5 @@
 import copy
+import pickle
 import sys
 import time
 
@@ -27,7 +28,7 @@ def get_rank1_corrects(outputs, labels):
     return torch.as_tensor(rank1_acc)
 
 
-def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_sizes, device, model_dir, num_epochs=25):
+def train_model(model, embedding_inp, criterion, optimizer, scheduler, dataloaders, dataset_sizes, device, model_dir, num_epochs=25):
     since = time.time()
 
     best_model_wts = copy.deepcopy(model.state_dict())
@@ -57,11 +58,18 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders, dataset_siz
 
                 # zero the parameter gradients
                 optimizer.zero_grad()
-
                 # forward
                 # track history if only in train
+
+                if phase == 'train':
+                    inp_var = torch.autograd.Variable(embedding_inp, requires_grad=True).float().detach()  # one hot. # pickle of word2vec.
+                else:
+                    inp_var = torch.autograd.Variable(embedding_inp, requires_grad=False).float().detach()  # one hot. # pickle of word2vec.
+
+                inp_var = inp_var.to(device)
+
                 with torch.set_grad_enabled(phase == 'train'):
-                    outputs = model(inputs)
+                    outputs = model(inputs, inp_var)
                     _, preds = torch.max(outputs, 1)
                     loss = criterion(outputs, labels_ohe.float())
 
@@ -116,7 +124,7 @@ if __name__ == '__main__':
     data_dir = "./data/sample"
     num_epochs = 25
 
-    if len(cmd_args) != 6:
+    if len(cmd_args) != 8:
         print("Check your arguments")
         print("Running on sample data")
     else:
@@ -125,6 +133,8 @@ if __name__ == '__main__':
         data_dir = cmd_args[3]
         num_epochs = int(cmd_args[4])
         model_dir = cmd_args[5]
+        pkl_file = cmd_args[6]
+        adj_file = cmd_args[7]
 
     bm = base_model.BaseModel()
     gm = glore_model.GloreModel()
@@ -134,7 +144,10 @@ if __name__ == '__main__':
     # model = bm.get_model(finetune_conv=False, device=device)
     # model = gm.get_model(out_features=num_classes, finetune_conv=True, device=device)  # 79 classes for halfhalf dataset
 
-    model = gcn.get_model(t=0.4, adj_file='./data/baseline_left_labels.pkl', out_features=num_classes, finetune_conv=False, device=device)
+    # Todo: add no_grad = True for word embeddings. Need to tune in training phase? check L421 engine.py (ML-GCN)
+    # Todo: check with image_feaures as 448 in ML-GCN
+
+    model = gcn.get_model(t=0.4, adj_file=adj_file, out_features=num_classes, finetune_conv=False, device=device)
 
     dataloaders, dataset_sizes = data.data_load.get_data_loaders(train_csv=train_csv, val_csv=val_csv, data_dir=data_dir)
 
@@ -144,5 +157,8 @@ if __name__ == '__main__':
 
     exp_lr_scheduler = lr_scheduler.StepLR(sgd, step_size=10, gamma=0.9)
 
-    train_model(model, criterion=cross_entropy, optimizer=sgd, scheduler=exp_lr_scheduler, dataloaders=dataloaders,
+    with open(pkl_file, "rb") as f:
+        inp = pickle.load(f)
+
+    train_model(model, inp, criterion=cross_entropy, optimizer=sgd, scheduler=exp_lr_scheduler, dataloaders=dataloaders,
                 dataset_sizes=dataset_sizes, device=device, model_dir=model_dir, num_epochs=num_epochs)

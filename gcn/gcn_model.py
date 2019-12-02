@@ -1,5 +1,6 @@
 from gcn.gcnunit import GCNResnet
 from model import Model
+from .gcnunit import GCNResnet
 
 
 class GcnModel(Model):
