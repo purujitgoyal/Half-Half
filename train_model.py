@@ -72,7 +72,6 @@ def train_model(model, embedding_inp, criterion, optimizer, scheduler, dataloade
                 with torch.set_grad_enabled(phase == 'train'):
                     # inputs: (batch x channels x 448 x 448)
                     # inp_var: (batch x num_classes x 300)
-                    print('inp_var', inp_var.size())
                     outputs = model(inputs, inp_var)
                     _, preds = torch.max(outputs, 1)
                     loss = criterion(outputs, labels_ohe.float())
