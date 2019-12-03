@@ -69,6 +69,7 @@ def train_model(model, embedding_inp, criterion, optimizer, scheduler, dataloade
                 # track history if only in train
                 with torch.set_grad_enabled(phase == 'train'):
                     outputs = model(inputs, inp_var)
+                    _, preds = torch.max(outputs, 1)
                     loss = criterion(outputs, labels_ohe.float())
 
                     # backward + optimize only if in training phase
@@ -76,10 +77,12 @@ def train_model(model, embedding_inp, criterion, optimizer, scheduler, dataloade
                         loss.backward()
                         optimizer.step()
 
-                # statistics
+                    # statistics
                 running_loss += loss.item() * inputs.size(0)
+                _, target = labels_ohe.max(1)
                 preds_ = torch.sigmoid(outputs)
                 preds_np = preds_.cpu().detach().numpy()
+                # # print(preds_np)
                 preds_np = np.where(preds_np > 0.5, 1, 0)
                 preds_ = torch.from_numpy(preds_np)
                 labels_ohe = labels_ohe.cpu()
@@ -95,9 +98,9 @@ def train_model(model, embedding_inp, criterion, optimizer, scheduler, dataloade
                     running_recall += recall_score(labels_ohe, preds_, average="micro")
 
                 if phase == 'train':
-                    running_corrects += get_accuracy_score(labels_ohe, preds_)
+                    running_corrects += torch.sum(preds == target)
                 if phase == 'val':
-                    running_corrects += get_accuracy_score(labels_ohe, preds_)
+                    running_corrects += torch.sum(preds == target)
 
                 # print(multilabel_confusion_matrix(labels_ohe, preds_))
                 # print(classification_report(labels_ohe, preds_))
