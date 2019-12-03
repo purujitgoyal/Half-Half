@@ -28,7 +28,7 @@ def get_data_loaders(val_csv, data_dir, batch_size=32, num_workers=0, train_csv=
         # Training phase
         print('Loading Data in training mode')
         train_dataset = HalfHalfLabelsDataset(csv_file=train_csv, root_dir=os.path.join(data_dir, 'train', 'images'),
-                                          transform=transformation, num_classes=79)
+                                              transform=transformation, num_classes=79)
         val_dataset = HalfHalfLabelsDataset(csv_file=val_csv, root_dir=os.path.join(data_dir, 'val', 'images'),
                                             transform=transformation, num_classes=79)
         image_datasets = {'train': train_dataset, 'val': val_dataset}
@@ -54,7 +54,18 @@ def get_data_loaders(val_csv, data_dir, batch_size=32, num_workers=0, train_csv=
         return dataloaders, dataset_sizes
 
 
+def get_test_data_loader(test_csv, data_dir, batch_size=32, num_workers=0):
+    transformation = _data_transformation()
+    print('Loading Data in test mode')
+    test_dataset = HalfHalfLabelsDataset(csv_file=test_csv, root_dir=os.path.join(data_dir, 'test', 'images'),
+                                         transform=transformation, num_classes=79)
+    image_datasets = {'test': test_dataset}
 
+    dataloaders = {x: DataLoader(image_datasets[x], batch_size=batch_size, shuffle=True, num_workers=num_workers)
+                   for x in ['test']}
+    dataset_sizes = {x: len(image_datasets[x]) for x in ['test']}
+
+    return dataloaders, dataset_sizes
 
 
 def imshow(inp, title=None):
