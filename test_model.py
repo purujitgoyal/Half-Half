@@ -42,6 +42,7 @@ def test_model(model, criterion, dataloaders, dataset_sizes, device):
         running_loss += loss.item() * inputs.size(0)
         _, target = labels_ohe.max(1)
         running_corrects += get_rank1_corrects(outputs, labels)
+        print(running_corrects)
 
     epoch_loss = running_loss / dataset_sizes['test']
     epoch_acc = running_corrects.double() / dataset_sizes['test']
@@ -54,9 +55,9 @@ if __name__ == '__main__':
     cmd_args = sys.argv
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    test_csv = cmd_args[1]
-    data_dir = cmd_args[2]
-    model_wts = cmd_args[3]
+    test_csv = './data/test_ann_encoded.csv'
+    data_dir = '/Users/purujit/Desktop/'
+    model_wts = './model_wts'
 
     bm = base_model.BaseModel()
     gm = glore_model.GloreModel()
@@ -64,9 +65,9 @@ if __name__ == '__main__':
     num_classes = 79
     finetune_conv = False
 
-    # model = bm.get_model(finetune_conv=finetune_conv, device=device)
-    model = gm.get_model(out_features=num_classes, finetune_conv=finetune_conv, device=device)  # 79 classes for halfhalf dataset
-    model.load_state_dict(torch.load(model_wts))
+    model = bm.get_model(finetune_conv=finetune_conv, device=device)
+    # model = gm.get_model(out_features=num_classes, finetune_conv=finetune_conv, device=device)  # 79 classes for halfhalf dataset
+    model.load_state_dict(torch.load(model_wts, map_location=torch.device('cpu')))
 
     dataloaders, dataset_sizes = data.data_load.get_test_data_loader(test_csv=test_csv,
                                                                      data_dir=data_dir)

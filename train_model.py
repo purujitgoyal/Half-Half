@@ -112,6 +112,7 @@ if __name__ == '__main__':
     train_csv = "./data/sample/sample_train_ann_encoded.csv"
     val_csv = "./data/sample/sample_train_ann_encoded.csv"
     data_dir = "./data/sample"
+    model_dir = "."
     num_epochs = 25
 
     if len(cmd_args) != 6:
@@ -127,10 +128,10 @@ if __name__ == '__main__':
     bm = base_model.BaseModel()
     gm = glore_model.GloreModel()
     finetune_conv = False
-    model_dir = model_dir + "_" + str(finetune_conv)
+    model_dir = model_dir + "_" + str(finetune_conv) + "_vg"
 
     # model = bm.get_model(finetune_conv=finetune_conv, device=device)
-    model = gm.get_model(out_features=79, finetune_conv=finetune_conv, device=device)  # 79 classes for halfhalf dataset
+    model = gm.get_model(out_features=79, finetune_conv=finetune_conv, device=device, model_wts='/home/abajaj/halfhalf/Code/Half-Half/model/model_glore_vg_False')  # 79 classes for halfhalf dataset
 
     dataloaders, dataset_sizes = data.data_load.get_data_loaders(train_csv=train_csv, val_csv=val_csv, data_dir=data_dir)
 

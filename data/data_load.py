@@ -6,6 +6,7 @@ from torch.utils.data import DataLoader
 from dataset.half_half_dataset import HalfHalfLabelsDataset
 import matplotlib.pyplot as plt
 import numpy as np
+import nonechucks as nc
 
 
 def _data_transformation():
@@ -59,6 +60,7 @@ def get_test_data_loader(test_csv, data_dir, batch_size=32, num_workers=0):
     print('Loading Data in test mode')
     test_dataset = HalfHalfLabelsDataset(csv_file=test_csv, root_dir=os.path.join(data_dir, 'test', 'images'),
                                          transform=transformation, num_classes=79)
+    test_dataset = nc.SafeDataset(test_dataset)
     image_datasets = {'test': test_dataset}
 
     dataloaders = {x: DataLoader(image_datasets[x], batch_size=batch_size, shuffle=True, num_workers=num_workers)
