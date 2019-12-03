@@ -153,10 +153,10 @@ if __name__ == '__main__':
     dataloaders, dataset_sizes = data.data_load.get_data_loaders(train_csv=train_csv, val_csv=val_csv, data_dir=data_dir)
 
     cross_entropy = nn.BCEWithLogitsLoss()
-    sgd = optim.SGD(model.parameters(), lr=0.0001, momentum=0.9, weight_decay=0.01)
+    sgd = optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=1e-4)
     # adam = optim.Adam(model.parameters(), lr=0.9, weight_decay=0.01)
 
-    exp_lr_scheduler = lr_scheduler.StepLR(sgd, step_size=40, gamma=0.9)
+    exp_lr_scheduler = lr_scheduler.StepLR(sgd, step_size=30, gamma=0.1)
 
     with open(pkl_file, "rb") as f:
         inp = pickle.load(f)
