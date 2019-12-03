@@ -149,6 +149,7 @@ if __name__ == '__main__':
 
     model = gcn.get_model(t=0.4, adj_file=adj_file, out_features=num_classes, finetune_conv=finetune_conv, device=device)
 
+
     dataloaders, dataset_sizes = data.data_load.get_data_loaders(train_csv=train_csv, val_csv=val_csv, data_dir=data_dir)
 
     cross_entropy = nn.BCEWithLogitsLoss()

@@ -9,6 +9,6 @@
 #
 #SBATCH --ntasks=1
 
-python -u glore_train.py ./Data/visual_genome/visual_genome_train_ann.csv ./Data/visual_genome/visual_genome_val_ann.csv /mnt/nfs/scratch1/abajaj/halfhalf/ 100
+python -u glore_train.py ./Data/visual_genome/visual_genome_train_ann_final.csv ./Data/visual_genome/visual_genome_val_ann_final.csv /mnt/nfs/scratch1/abajaj/halfhalf/ 100 ./model/model_glore_vg
 
 exit
