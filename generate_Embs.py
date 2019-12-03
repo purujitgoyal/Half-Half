@@ -90,7 +90,7 @@ inp_name = 'Data/baseline_glove_word2vec.pkl'
 adj_file = 'Data/baseline_left_labels.pkl'
 testing_pickles(inp_name, adj_file, num_classes)
 
-num_classes = 80 # Genome
+num_classes = 78 #  Corrected Genome
 inp_name = './data/visualgenome_glove_word2vec.pkl'
 adj_file = './data/visualgenome_left_labels.pkl'
 testing_pickles(inp_name, adj_file, num_classes)

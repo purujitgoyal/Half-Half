@@ -154,19 +154,19 @@ if __name__ == '__main__':
     gcn = GcnModel()
     finetune_conv = False
     model_dir = model_dir + str(finetune_conv)
-    num_classes = 80
+    num_classes = 78
     # model = bm.get_model(finetune_conv=finetune_conv, device=device)
     model = gcn.get_model(t=0.4, adj_file=adj_file, out_features=num_classes, finetune_conv=finetune_conv, device=device)
     dataloaders, dataset_sizes = vg_data_load.get_data_loaders(train_csv=train_csv, val_csv=val_csv, data_dir=data_dir)
 
     cross_entropy = nn.BCEWithLogitsLoss()
-    # sgd = optim.SGD(model.parameters(), lr=0.9, momentum=0.9)
-    adam = optim.Adam(model.parameters(), lr=1, weight_decay=0.1)
+    sgd = optim.SGD(model.parameters(), lr=0.0001, momentum=0.9, weight_decay=0.01)
+    # adam = optim.Adam(model.parameters(), lr=0.9, weight_decay=0.01)
 
-    exp_lr_scheduler = lr_scheduler.StepLR(adam, step_size=20, gamma=0.99)
+    exp_lr_scheduler = lr_scheduler.StepLR(sgd, step_size=40, gamma=0.9)
 
     with open(pkl_file, "rb") as f:
         inp = pickle.load(f)
 
-    train_model(model, inp, criterion=cross_entropy, optimizer=adam, scheduler=exp_lr_scheduler, dataloaders=dataloaders,
+    train_model(model, inp, criterion=cross_entropy, optimizer=sgd, scheduler=exp_lr_scheduler, dataloaders=dataloaders,
                 dataset_sizes=dataset_sizes, device=device, model_dir=model_dir, num_epochs=num_epochs)
