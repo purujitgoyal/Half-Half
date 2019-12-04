@@ -9,7 +9,7 @@ import numpy as np
 import nonechucks as nc
 
 
-def _data_transformation():
+def data_transformation():
     transformation = transforms.Compose([
         transforms.ToPILImage(),
         transforms.Resize((224, 224)),
