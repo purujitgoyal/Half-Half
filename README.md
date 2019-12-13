@@ -5,4 +5,4 @@ Half & Half is a set of recently released tasks and benchmarks to analyze a visu
 ## Approach
 Incorporated visual context using Glove-based Graph Convolutional Networks (GCN) and Graph-Based Global Reasoning Networks (GloRe) models in the mulit-label image classification pipeline to achieve significant gains.
 
-Relevant literature and baselines: http://openaccess.thecvf.com/content_CVPRW_2019/papers/Vision_Meets_Cognition_Camera_Ready/Singh_HalfHalf_New_Tasks_and_Benchmarks_for_Studying_Visual_Common_Sense_CVPRW_2019_paper.pdf
+Dataset (subset of MSCOCO) and baselines taken from: http://openaccess.thecvf.com/content_CVPRW_2019/papers/Vision_Meets_Cognition_Camera_Ready/Singh_HalfHalf_New_Tasks_and_Benchmarks_for_Studying_Visual_Common_Sense_CVPRW_2019_paper.pdf
